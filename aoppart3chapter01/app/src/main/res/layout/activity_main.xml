@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="결과"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/resultTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="12dp"
+        android:textSize="16sp"
+        tools:text="결과 값 입니다." />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Firebase 토큰"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+
+    <!-- textIsSelectable : 텍스트를 선택 할 수 있도록 허용해서 복사 가능하도록 -->
+    <!-- marginStart : 아랍어의 경우 오른쪽에서 왼쪽으로 가기 때문에 오른쪽에 마진이 생김 / Manifest  supportsRtl true 필요 -->
+    <!-- layoutDirection : 글씨 방향 -->
+    <TextView
+        android:id="@+id/firebaseTokenTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="12dp"
+        android:layoutDirection="ltr"
+        android:text="Loading..."
+        android:textIsSelectable="true"
+        android:textSize="16sp" />
+
+
+</LinearLayout>
