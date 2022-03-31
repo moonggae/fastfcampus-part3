@@ -1,11 +1,13 @@
 package fastcampus.aop.part3.chapter03
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import fastcampus.aop.part3.chapter03.databinding.ActivityMainBinding
 import java.util.*
 import kotlin.math.min
@@ -25,21 +27,63 @@ class MainActivity : AppCompatActivity() {
 
         val model = fetchDataFromSharedPreferences()
         renderView(model)
-        //step1 데이터 가져오기
-        //step2 뷰에 데이터를 그려주기
     }
 
 
     private fun initOnOffButton() {
         binding.onOffButton.setOnClickListener {
-            // 데이터를 확인을 한다.
+            val model = it.tag as? AlarmDisplayModel ?: return@setOnClickListener
+            val newModel = saveAlarmModel(model.hour, model.minute, model.onOff.not())
+            renderView(newModel)
 
-            // 온오프에 따라 작업을 처맇나다.
+            if (newModel.onOff) {
+                // 켜진 경우 -> 알람을 등록
+                val calendar = Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, newModel.hour)
+                    set(Calendar.MINUTE, newModel.minute)
 
-            // 오프 -> 알람 제거
-            // 온 -> 알람을 등록
+                    if (before(Calendar.getInstance())) {
+                        add(Calendar.DATE, 1)
+                    }
+                }
 
-            // 데이터를 저장한다.
+                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val intent = Intent(this, AlarmReceiver::class.java)
+                val pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    ALARM_REQUEST_CODE,
+                    intent,
+                    PendingIntent.FLAG_MUTABLE
+                )
+
+                // doze모드에서 알람 사용하기
+                // 잠자기 모드(doze) : https://developer.android.com/training/monitoring-device-state/doze-standby?hl=ko
+                // setAndAllowWhileIdle : https://developer.android.com/reference/android/app/AlarmManager#setAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+                // alarmManager.setAndAllowWhileIdle()
+                // alarmManager.setExactAndAllowWhileIdle()
+
+
+                // setInexactRepeating : 시간이 정확하지 않음음
+
+                // ELAPSED_REALTIME_WAKEUP : 휴대폰 부팅된후 시간
+                // RTC_WAKEUP : 절대시간
+                alarmManager.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    AlarmManager.INTERVAL_DAY,
+                    pendingIntent
+                )
+
+                Toast.makeText(
+                    this,
+                    "알람을 등록했습니다. ${newModel.timeText}${newModel.ampmText}",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            } else {
+                // 꺼진 경우 -> 알람을 제거
+                cancelAlarm()
+            }
         }
     }
 
@@ -54,17 +98,9 @@ class MainActivity : AppCompatActivity() {
                 this,
                 R.layout.activity_main,
                 { timePicker, hour, minute ->
-
                     val model = saveAlarmModel(hour, minute, false)
                     renderView(model)
-
-                    val pendingIntent = PendingIntent.getBroadcast(
-                        this,
-                        ALARM_REQUEST_CODE,
-                        Intent(this, AlarmReceiver::class.java),
-                        PendingIntent.FLAG_NO_CREATE
-                    )
-                    pendingIntent?.cancel()
+                    cancelAlarm()
                 },
                 calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
@@ -106,21 +142,21 @@ class MainActivity : AppCompatActivity() {
 
         // 보정 보정 예외처리
         // PendingIntent.FLAG_NO_CREATE : 있으면 가져오고 없으면 Null
-//        val pendingIntent = PendingIntent.getBroadcast(
-//            this,
-//            ALARM_REQUEST_CODE,
-//            Intent(this, AlarmReceiver::class.java),
-//            PendingIntent.FLAG_NO_CREATE
-//        )
-//        if ((pendingIntent == null) and alarmModel.onOff) {
-//            // 알람은 꺼져있는데, 데이터는 켜져있는 경우
-//            alarmModel.onOff = false
-//
-//        } else if ((pendingIntent != null) and alarmModel.onOff.not()) {
-//            // 알람은 켜져있는데, 데이터는 꺼져있는 경우
-//            // 알람을 취소함
-//            pendingIntent.cancel()
-//        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            ALARM_REQUEST_CODE,
+            Intent(this, AlarmReceiver::class.java),
+            PendingIntent.FLAG_MUTABLE
+        )
+        if ((pendingIntent == null) and alarmModel.onOff) {
+            // 알람은 꺼져있는데, 데이터는 켜져있는 경우
+            alarmModel.onOff = false
+
+        } else if ((pendingIntent != null) and alarmModel.onOff.not()) {
+            // 알람은 켜져있는데, 데이터는 꺼져있는 경우
+            // 알람을 취소함
+            pendingIntent.cancel()
+        }
 
         return alarmModel
     }
@@ -139,6 +175,17 @@ class MainActivity : AppCompatActivity() {
             text = model.onOffText
             tag = model
         }
+    }
+
+    private fun cancelAlarm() {
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            ALARM_REQUEST_CODE,
+            Intent(this, AlarmReceiver::class.java),
+            PendingIntent.FLAG_MUTABLE
+        )
+        pendingIntent?.cancel()
+        Toast.makeText(this, "알람을 삭제했습니다.", Toast.LENGTH_SHORT).show()
     }
 
 
