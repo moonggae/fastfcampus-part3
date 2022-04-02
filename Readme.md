@@ -149,3 +149,40 @@ remoteConfig.fetchAndActivate().addOnCompleteListener {
         }
     }
     ```
+
+# Chapter03 - 알람 앱
+
+## kotlin format chatacter
+- 숫자 자리수를 지정해줄 때 유용하다
+    - %d : 정수값 지정
+    - %f : 소수값 지정 (.2f 의미는 소수점 기준으로 하위 2자리까지 출력)
+    -  %s : 문자열값 지정
+```kotlin 
+val str = "%02d, %.2f".format(4, 10) // 04, 10.00
+```
+
+## [Shared Preferences](https://developer.android.com/training/data-storage/shared-preferences)
+- key-value 쌍을 저장할 때 사용한다.
+- name, key를 지정해놓고 사용해야 하는데 `companion object`에 const로 할당해서 사용하는게 좋다.
+- 여러 데이터를 저장할 때에는 Json 형식으로 사용하면 편하다.
+- Pregerences를 가져 올때 `MODE_PRIVATE` 모드로 가져오는데 다른앱에서 사용하지 못하게 한다. 퍼블릭으로 사용하는 방법은 deprecated
+- 에디터 저장시에 `commit()`, `apply()` 2가지 방법이 있다.
+    - `commit() : boolean` : 쓰레드를 블록시키며 실행 결과값을 boolean으로 리턴한다
+    - `apply() : Unit` : 쓰레드를 블록시키지 않는다.
+
+## Background 작업
+- Immediate tasks (즉시 실행해야하는 작업)
+    - Thread
+    - Handler
+    - Kotlin coroutines
+- Deferred tasks (지연된 작업)
+    - WorkManager
+- Exact tasks (정시에 실행해야 하는 작업)
+    - AlarmManager
+
+## [AlarmManager](https://developer.android.com/training/scheduling/alarms)
+- 원하는 시간에 이벤트를 발생시킬 수 있음
+    - RTC_WAKEUP : 절대시간 (absolute time)
+    - ELAPSED_REALTIME_WAKEUP : 휴대폰이 부팅 된 이후 지난 시간
+- 알람을 설정 할 때 `setRepeating()` 대신 `setInexactRepeating()`을 사용하면 자원을 줄일 수 있다. 하지만 시간 정확도는 떨어진다.
+- doze모드에서 사용이 필요하면 `setAndAllowWhileIdle(), setExactAndAllowWhileIdle()`을 사용하면 된다.
