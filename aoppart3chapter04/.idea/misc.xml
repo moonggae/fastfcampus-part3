@@ -5,8 +5,10 @@
       <map>
         <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter04/app/src/main/res/drawable/background_gray_stroke_radius_16.xml" value="0.2135" />
         <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter04/app/src/main/res/drawable/background_gray_stroke_radius_8.xml" value="0.213" />
+        <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter04/app/src/main/res/layout/activity_detail.xml" value="0.2907608695652174" />
         <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter04/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter04/app/src/main/res/layout/item_book.xml" value="0.2898550724637681" />
+        <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter04/app/src/main/res/layout/item_history.xml" value="0.2907608695652174" />
       </map>
     </option>
   </component>
