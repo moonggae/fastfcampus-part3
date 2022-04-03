@@ -3,7 +3,10 @@ package fastcampus.aop.part3.chapter04
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
+import fastcampus.aop.part3.chapter04.adapter.BookAdapter
 import fastcampus.aop.part3.chapter04.api.BookService
+import fastcampus.aop.part3.chapter04.databinding.ActivityMainBinding
 import fastcampus.aop.part3.chapter04.model.BestSellerDto
 import retrofit2.Call
 import retrofit2.Callback
@@ -15,9 +18,19 @@ class MainActivity : AppCompatActivity() {
 
     private val TAG = "로그"
 
+    private val binding : ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    private val adapter : BookAdapter by lazy {
+        BookAdapter()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+
+        initBookRecyclerView()
 
         val retrofit = Retrofit.Builder()
             .baseUrl("http://book.interpark.com")
@@ -40,6 +53,8 @@ class MainActivity : AppCompatActivity() {
                         it.books.forEach { book ->
                             Log.d(TAG, book.toString())
                         }
+
+                        adapter.submitList(it.books)
                     }
                 }
 
@@ -48,6 +63,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
             })
+    }
+
+    fun initBookRecyclerView(){
+        binding.bookRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.bookRecyclerView.adapter = adapter
     }
 
 
