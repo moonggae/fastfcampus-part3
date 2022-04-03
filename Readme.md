@@ -186,3 +186,104 @@ val str = "%02d, %.2f".format(4, 10) // 04, 10.00
     - ELAPSED_REALTIME_WAKEUP : 휴대폰이 부팅 된 이후 지난 시간
 - 알람을 설정 할 때 `setRepeating()` 대신 `setInexactRepeating()`을 사용하면 자원을 줄일 수 있다. 하지만 시간 정확도는 떨어진다.
 - doze모드에서 사용이 필요하면 `setAndAllowWhileIdle(), setExactAndAllowWhileIdle()`을 사용하면 된다.
+
+
+# Chapter04 - 도서 리뷰 앱
+## Retrofit2
+- Restful API 호출하여 사용하는 라이브러리
+- gson과 함께 사용하면 모델을 편하게 사용할 수 있음
+- 모델생성시 `@SerializedName` 어노테이션을 사용해서 json object키와 필드 이름을 다르게 지정할 수 있음
+- response json 최상단에 모델값이 없더라도 Dto 클래스를 사용해서 node를 맞추어 사용하면 따로 파싱할 필요 없음
+```kotlin
+data class SearchBookDto (
+    @SerializedName("title") val title : String,
+    @SerializedName("item") val books : List<Book>,
+)
+```
+
+## Room
+- 내장 DB를 사용하는 라이브러리
+- 어노테이션 이용
+    - Entity : 테이블
+    - PrimaryKey : 기본키
+    - ColumnInfo : 컬럼 정보
+```kotlin
+@Entity
+data class History(
+    @PrimaryKey val uid : Int?,
+    @ColumnInfo(name = "keyword") val keyword : String?
+)
+```
+- 인터페이스를 이용해 Dao를 만들고 쿼리를 작성함
+```kotlin
+@Dao
+interface HistoryDao {
+    @Query("SELECT * FROM history")
+    fun getAll() : List<History>
+
+    @Insert
+    fun insertHistory(history: History)
+
+    @Query("DELETE FROM history WHERE keyword = :keyword")
+    fun delete(keyword : String)
+}
+```
+- 테이블이 추가되거나 변경 될 때는 db버전을 올리고, 마이그레이션 코드를 직접 작성해서 진행함
+```kotlin
+fun getAppDatabase(context : Context) : AppDatabase{
+    val migration_1_2 = object : Migration(1,2){
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE `REVIEW` (`id` INTEGER, `review` TEXT," + "PRIMARY KEY(`id`))")
+        }
+    }
+    return Room.databaseBuilder(
+        context,
+        AppDatabase::class.java,
+        "BookSearchDB"
+    )
+        .addMigrations(migration_1_2)
+        .build()
+}
+
+```
+
+
+## RecyclerView
+- Adapter안에 ViewHolder를 inner class로 작성해 이벤트 리스너를 파라미터롤 받아 사용할 수 있음
+```kotlin
+class HistoryAdapter(val historyDeleteClickedListener : (String) -> Unit) : ListAdapter<History, HistoryAdapter.HistoryItemViewHolder>(diffUtil){
+    inner class HistoryItemViewHolder(private val binding : ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root){
+        fun bind(historyModel : History) {
+            binding.historyKeywordDeleteButton.setOnClickListener {
+                historyDeleteClickedListener(historyModel.keyword.orEmpty())
+            }
+...
+```
+- `diffUtil`을 이용해 notifyDataSetChanged() 사용 하지않기
+    - `notifyDataSetChanged()`를 사용하면 리스트를 모두 비우고 처음부터 다시 렌더링함
+    - `diffUtil`를 사용하면 이전 데이터와 현재 데이터의 상태 차이를 계산하고 최소한의 데이터만 갱신한다.
+
+## Glide
+- 서버에 있는 이미지 URL을 가지고 있을 때 이미지를 편리하게 적용할 수 있다.
+```kotlin
+Glide.with(binding.coverImageView.context)
+            .load(bookModel?.coverSmallUrl.orEmpty())
+            .into(binding.coverImageView)
+```
+
+## EditText
+- 아래 옵션을 통해 1줄만 작성하게함
+```kotlin
+android:inputType="text"
+android:lines="1"
+```
+- 엔터 이벤트 적용하기
+```kotlin
+binding.searchEditText.setOnKeyListener { v, keyCode, event ->
+    if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
+        search(binding.searchEditText.text.toString())
+        return@setOnKeyListener true
+    }
+    return@setOnKeyListener false
+}
+```
