@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-
     private val bookService by lazy {
         val retrofit = Retrofit.Builder()
             .baseUrl("http://book.interpark.com")
@@ -55,11 +54,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val db: AppDatabase by lazy {
-        Room.databaseBuilder(
-            this,
-            AppDatabase::class.java,
-            "BookSearchDB"
-        ).build()
+        getAppDatabase(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +78,6 @@ class MainActivity : AppCompatActivity() {
                 override fun onFailure(call: Call<BestSellerDto>, t: Throwable) {
                     // todo 실패처리
                 }
-
             })
 
         initSearchEditText()
