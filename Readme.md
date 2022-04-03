@@ -270,3 +270,20 @@ Glide.with(binding.coverImageView.context)
             .load(bookModel?.coverSmallUrl.orEmpty())
             .into(binding.coverImageView)
 ```
+
+## EditText
+- 아래 옵션을 통해 1줄만 작성하게함
+```kotlin
+android:inputType="text"
+android:lines="1"
+```
+- 엔터 이벤트 적용하기
+```kotlin
+binding.searchEditText.setOnKeyListener { v, keyCode, event ->
+    if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
+        search(binding.searchEditText.text.toString())
+        return@setOnKeyListener true
+    }
+    return@setOnKeyListener false
+}
+```
