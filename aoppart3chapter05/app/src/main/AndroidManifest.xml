@@ -27,6 +27,8 @@
 
         <activity android:name=".LikeActivity"/>
 
+        <activity android:name=".MatchedUserActivity"/>
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
