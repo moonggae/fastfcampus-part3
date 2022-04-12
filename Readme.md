@@ -287,3 +287,83 @@ binding.searchEditText.setOnKeyListener { v, keyCode, event ->
     return@setOnKeyListener false
 }
 ```
+
+# Chapter05 - 틴더 앱
+## 로그인 상태 관리
+- 어플 시작시 `MainActivity` 호출
+- `MainActivity`에서 로그인 정보가 없으면 `LoginActivity`호출, 로그인 정보가 있으면 `LikeActivity`호출
+- `LoginActivity`에서 로그인 성공하면 `finish()`
+
+## Firebase - Authentication
+- email, 전화번호, 익명, sns 계정 등 다양한 로그인 기능을 간편하게 이용 할 수 있게 지원함
+- Instance
+```kotlin
+val auth : FirebaseAuth = FirebaseAuth.getInstance()
+// or
+val auth : FirebaseAuth = Firebase.auth
+```
+- Email 회원가입
+```kotlin
+auth.createUserWithEmailAndPassword(email, password)
+    .addOnCompleteListener(this) { task ->
+        if (task.isSuccessful) {
+            ...
+        } 
+    }
+```
+- Email 로그인
+```kotlin
+auth.signInWithEmailAndPassword(email, password)
+    .addOnCompleteListener(this) { task ->
+        if (task.isSuccessful) {
+            ...
+        } 
+    }
+```
+
+## Firebase - Realtime Database
+- NoSQL DB
+- key와 value로 이용
+- DatabaseReference
+```kotlin
+private val userDB : DatabaseReference = Firebase.database.reference.child(USERS)
+```
+- Insert Value
+```kotlin
+userDB.child("keyName").setValue("value")
+```
+- Get Value
+- `ValueEventListener - onDataChange()` : 하위 요소를 포함한 데이터가 변경 될 때 마다 호출됨
+- `addListenerForSingleValueEvent` : 로컬 캐시 값을 이용하고 싶을 때 사용
+```kotlin
+val otherUserDB = userDB.child(getCurrentUserID()).child(LIKED_BY).child(LIKE).child(otherUserId)
+otherUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
+    override fun onDataChange(snapshot: DataSnapshot) {
+        if (snapshot.value == true) {
+            ...
+        }
+    }
+
+    override fun onCancelled(error: DatabaseError) {}
+})
+```
+- `get()` : 데이터 한 번 읽기
+```kotlin
+mDatabase.child("users").child(userId).get().addOnSuccessListener {
+    Log.i("firebase", "Got value ${it.value}")
+}.addOnFailureListener{
+    Log.e("firebase", "Error getting data", it)
+}
+```
+
+## CardStackView
+- 카드를 넘기는 이벤트
+- `ViewHolder Pattern`으로 구현
+```kotlin
+private fun initCardStackView() {
+    binding.cardStackView.layoutManager = CardStackLayoutManager(context = this, listner = this)
+    binding.cardStackView.adapter = CardItemAdapter()
+}
+```
+
+![card stack view](./resources/cardstack.gif)
