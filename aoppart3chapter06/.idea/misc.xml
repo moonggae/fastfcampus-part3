@@ -6,10 +6,16 @@
         <entry key="..\:/Users/Choi/Desktop/study/Android/fastcampus/part3/aoppart3chapter06/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.367" />
         <entry key="..\:/Users/Choi/Desktop/study/Android/fastcampus/part3/aoppart3chapter06/app/src/main/res/layout/activity_main.xml" value="0.18" />
         <entry key="..\:/Users/Choi/Desktop/study/Android/fastcampus/part3/aoppart3chapter06/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.36614583333333334" />
+        <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter06/app/src/main/res/drawable/selector_menu_color.xml" value="0.21" />
+        <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter06/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter06/app/src/main/res/layout/fragment_chatlist.xml" value="0.2994791666666667" />
+        <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter06/app/src/main/res/layout/fragment_home.xml" value="0.2994791666666667" />
+        <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter06/app/src/main/res/layout/fragment_mypage.xml" value="0.2994791666666667" />
+        <entry key="..\:/drive1/Development/AndroidProject/FastCampus/part3/aoppart3chapter06/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.2994791666666667" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
