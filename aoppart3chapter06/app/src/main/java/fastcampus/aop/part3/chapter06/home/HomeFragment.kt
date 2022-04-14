@@ -14,13 +14,17 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import fastcampus.aop.part3.chapter06.DBKey.Companion.CHILD_CHAT
 import fastcampus.aop.part3.chapter06.DBKey.Companion.DB_ARTICLES
+import fastcampus.aop.part3.chapter06.DBKey.Companion.DB_USERS
 import fastcampus.aop.part3.chapter06.R
+import fastcampus.aop.part3.chapter06.chatlist.ChatListItem
 import fastcampus.aop.part3.chapter06.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private lateinit var articleDB: DatabaseReference
+    private lateinit var userDB: DatabaseReference
     private lateinit var articleAdapter: ArticleAdapter
 
     private val articleList = mutableListOf<ArticleModel>()
@@ -51,6 +55,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         articleList.clear()
         articleDB = Firebase.database.reference.child(DB_ARTICLES)
+        userDB = Firebase.database.reference.child(DB_USERS)
 
         initArticleRecyclerView()
         initAddFloatingButton()
@@ -60,7 +65,38 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
 
     private fun initArticleRecyclerView() {
-        articleAdapter = ArticleAdapter()
+        articleAdapter = ArticleAdapter() { articleModel ->
+            if (auth.currentUser != null) {
+                // 로그인을 한 상태
+                if (auth.currentUser!!.uid != articleModel.sellerId) {
+                    val chatRoom = ChatListItem(
+                        buyerId = auth.currentUser!!.uid,
+                        sellerId = articleModel.sellerId,
+                        itemTitle = articleModel.title,
+                        key = System.currentTimeMillis()
+                    )
+
+                    userDB.child(auth.currentUser!!.uid)
+                        .child(CHILD_CHAT)
+                        .push()
+                        .setValue(chatRoom)
+
+                    userDB.child(articleModel.sellerId)
+                        .child(CHILD_CHAT)
+                        .push()
+                        .setValue(chatRoom)
+
+                    Snackbar.make(requireView(), "채팅방이 생성되었습니다. 채팅탭에서 확인해주세요.", Snackbar.LENGTH_SHORT).show()
+                } else {
+                    Snackbar.make(requireView(), "내가 올린 아이템입니다.", Snackbar.LENGTH_SHORT).show()
+                }
+            } else {
+                // 로그인을 안 한 상태
+                Snackbar.make(requireView(), "로그인 후 사용해주세요", Snackbar.LENGTH_SHORT).show()
+            }
+
+
+        }
         binding.articleRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.articleRecyclerView.adapter = articleAdapter
     }
@@ -69,7 +105,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.addFloatingButton.setOnClickListener {
 //            startActivity(Intent(requireContext(), ArticleAddActivity::class.java))
             context?.let {
-                // todo 로그인 기능 구현 후 주석 해제
                 if (auth.currentUser != null) {
                     startActivity(Intent(it, AddArticleActivity::class.java))
                 } else {
