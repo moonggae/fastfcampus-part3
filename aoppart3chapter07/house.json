@@ -1,0 +1,46 @@
+{
+    "items":[
+        {
+            "id" : 1,
+            "title":"민하우스",
+            "price":"50,000원",
+            "lat": 37.4852154,
+            "lng":126.9169109,
+            "imgUrl": "https://lh3.googleusercontent.com/proxy/S8mRSBBaPDcIW4-tDlsLC4Gk-yUE3AhezQLfzKFrcgo6hChjGsDFfwWA_4MJbwda_yo1Vmy3pXuYf8m5yqZ-VKyLTvQlsvAewUnJ4KguwXDcWNlB_NpI7EgvdyZ9vUyLlJQsF11l87MXIA7W0VhvcCpucmbI74o=s387-k-no"
+        },
+        {
+            "id" : 2,
+            "title":"그레이스모텔",
+            "price":"30,000원",
+            "lat": 37.4840437,
+            "lng":126.9137837,
+            "imgUrl": "https://lh5.googleusercontent.com/p/AF1QipP8Rf9Wecg_1ETCpIMQOY2vc79YoODtWO_Ar5aq=w408-h306-k-no"
+        },
+        {
+            "id" : 3,
+            "title":"URBAN HOTEL&GOLF",
+            "price":"60,000원",
+            "lat": 37.4813087,
+            "lng":126.9149651,
+            "imgUrl": "https://lh5.googleusercontent.com/p/AF1QipO02DR6pyPO-iqiXNlIPUzgPKd39dlONmh-K8s_=w203-h135-k-no"
+        },
+        {
+            "id" : 4,
+            "title":"신라스테이 구로",
+            "price":"100,000원",
+            "lat": 37.4856291,
+            "lng":126.9045688,
+            "imgUrl": "https://lh3.googleusercontent.com/proxy/wczvRwaJKr60DsYaFn8ZGSvbLewp1jel6us7k8y77rokK-uRQsC_gYd6BcSYv_papDR0m2Ji7qDZScR-0DN1WyTQ2Tfvo-G42_UlipN0N4dhlw4S5Sm6dFOsVUCm_nT9OKNrNGSKzufGIPTsHWju-Idku0GTDsQ=w408-h612-k-no"
+        },
+        {
+            "id" : 5,
+            "title":"CS프리미어호텔서울",
+            "price":"120,000원",
+            "lat": 37.48116,
+            "lng":126.91282,
+            "imgUrl": "https://lh5.googleusercontent.com/proxy/6tJk5KDdpSDjX59I0HT3oUiMERR-YR-xGov4tXtb-9uxrUfrMBy-hf2PV6sy8KAftdsoK8CER0iLPGHjHeUmeUcOPS9Ini4R5dLkpsRqK3Hj0yPhxxGyLOXt32x9GJttGti3_zftfworKUDHzhHiY9YRboSGtA=w408-h272-k-no"
+        }
+        
+
+    ]
+}

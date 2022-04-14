@@ -1,17 +1,21 @@
 package fastcampus.aop.part3.chapter07
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.util.MarkerIcons
 import fastcampus.aop.part3.chapter07.databinding.ActivityMainBinding
+import retrofit2.*
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
-
+    private val TAG = "로그"
     private lateinit var naverMap: NaverMap
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -25,7 +29,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.mapView.getMapAsync(this)
     }
-
 
 
     override fun onMapReady(map: NaverMap) {
@@ -43,10 +46,47 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
 
+        getHouseListFromAPI()
+    }
+
+    private fun getHouseListFromAPI() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://run.mocky.io")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        retrofit.create(HouseService::class.java).also {
+            it.getHouseList()
+                .enqueue(object : Callback<HouseDto> {
+                    override fun onResponse(call: Call<HouseDto>, response: Response<HouseDto>) {
+                        if (response.isSuccessful.not()) {
+                            // 실패 처리
+                            return
+                        }
+
+                        response.body()?.let { dto ->
+                            dto.items.forEach { house ->
+                                updateMarker(house)
+                            }
+                        }
+
+                    }
+
+                    override fun onFailure(call: Call<HouseDto>, t: Throwable) {
+                        // 실패 처리
+                    }
+                })
+        }
+    }
+
+    private fun updateMarker(house: HouseModel) {
         val marker = Marker()
-        marker.position = LatLng(37.487563, 126.913346)
+        marker.position = LatLng(house.lat, house.lng)
+        // todo
         marker.map = naverMap
-//        marker.icon = MarkerIcons.BLUE // https://navermaps.github.io/android-map-sdk/guide-ko/5-2.html 마커 속성 가이드
+        marker.tag = house.id
+        marker.icon = MarkerIcons.BLACK
+        marker.iconTintColor = Color.RED
     }
 
 
@@ -67,7 +107,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             return
         }
-
     }
 
     override fun onStart() {
