@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -77,11 +78,51 @@ class AddArticleActivity : AppCompatActivity() {
             val price = binding.priceEditText.text.toString()
             val sellerId = auth.currentUser?.uid.orEmpty()
 
-            val model = ArticleModel(sellerId, title, System.currentTimeMillis(), "${price}원"," ")
-            articleDB.push().setValue(model)
+            showProgress()
 
-            finish()
+            // 중간에 이미지가 있으면 업로드 과정을 추가
+            if (selectedUri != null) {
+                val photoUri = selectedUri ?: return@setOnClickListener
+                uploadPhoto(photoUri,
+                    successHandler = { uri ->
+                        uploadArticle(sellerId, title, price, uri)
+                    },
+                    errorHandler = {
+                        Toast.makeText(this, "사진 업로드 실패", Toast.LENGTH_SHORT).show()
+                        hideProgress()
+                    })
+            } else {
+                uploadArticle(sellerId, title, price, "")
+            }
+
         }
+    }
+
+    private fun uploadPhoto(uri: Uri, successHandler: (String) -> Unit, errorHandler: () -> Unit) {
+        val fileName = "${System.currentTimeMillis()}.png"
+        storage.reference.child("article/photo").child(fileName)
+            .putFile(uri)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    storage.reference.child("article/photo").child(fileName)
+                        .downloadUrl
+                        .addOnSuccessListener { uri ->
+                            successHandler(uri.toString())
+                        }.addOnFailureListener {
+                            errorHandler()
+                        }
+                } else {
+                    errorHandler()
+                }
+            }
+    }
+
+    private fun uploadArticle(sellerId: String, title: String, price: String, imageUrl: String) {
+        val model = ArticleModel(sellerId, title, System.currentTimeMillis(), "${price}원", imageUrl)
+        articleDB.push().setValue(model)
+
+        hideProgress()
+        finish()
     }
 
 
@@ -100,6 +141,14 @@ class AddArticleActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showProgress(){
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgress(){
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun startContextProvider() {
