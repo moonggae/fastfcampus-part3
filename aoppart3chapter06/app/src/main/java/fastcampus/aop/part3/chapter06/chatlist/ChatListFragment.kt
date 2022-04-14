@@ -1,5 +1,6 @@
 package fastcampus.aop.part3.chapter06.chatlist
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import fastcampus.aop.part3.chapter06.DBKey
 import fastcampus.aop.part3.chapter06.DBKey.Companion.CHILD_CHAT
 import fastcampus.aop.part3.chapter06.DBKey.Companion.DB_USERS
 import fastcampus.aop.part3.chapter06.R
+import fastcampus.aop.part3.chapter06.chatdetail.ChatDetailActivity
 import fastcampus.aop.part3.chapter06.databinding.FragmentChatlistBinding
 
 class ChatListFragment : Fragment(R.layout.fragment_chatlist) {
@@ -38,8 +40,13 @@ class ChatListFragment : Fragment(R.layout.fragment_chatlist) {
             return
         }
 
-        chatListAdapter = ChatListAdapter { chatListItem ->
-            // 채팅방으로 이동 하는 코드드
+        chatListAdapter = ChatListAdapter { chatRoom ->
+            context?.let {
+                val intent = Intent(it, ChatDetailActivity::class.java)
+                intent.putExtra("chatKey", chatRoom.key)
+                startActivity(intent)
+            }
+
         }
 
         chatRoomList.clear()

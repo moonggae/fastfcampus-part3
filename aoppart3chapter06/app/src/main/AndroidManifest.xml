@@ -23,6 +23,7 @@
         </activity>
 
         <activity android:name=".home.AddArticleActivity" />
+        <activity android:name=".chatdetail.ChatDetailActivity"/>
     </application>
 
 </manifest>
