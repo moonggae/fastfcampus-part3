@@ -367,3 +367,41 @@ private fun initCardStackView() {
 ```
 
 ![card stack view](./resources/cardstack.gif)
+
+
+# Chapter06 - 중고나라 앱
+## BottomNavigationView
+- 하단에 메뉴 버튼들을 위치시켜 Fragment 이동을 원할하게 만들어줌
+![bottomNavigationView](./resources/bottomnavigationview.png)
+- Fragment 이동
+```kotlin
+private fun initBottomNavigationView() {
+    binding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
+        when(menuItem.itemId){
+            R.id.home -> replaceFragment(homeFragment)
+            R.id.chatList-> replaceFragment(charListFragment)
+            R.id.myPage ->replaceFragment(myPageFragment)
+        }
+        true
+    }
+}
+
+private fun replaceFragment(fragment : Fragment){
+    supportFragmentManager.beginTransaction()
+        .apply {
+            replace(binding.fragmentContainer.id, fragment)
+            commit()
+        }
+}
+```
+
+## Fragment
+- `Activity`와 다르게 재활용이 가능한 View
+- UI를 개별로 분할할 수 있도록 하여 `Activity` UI에 모듈성과 재사용성을 도입
+- 독립적으로 존재할 수 없음
+- life cycle
+
+<img src="./resources/fragment-view-lifecycle.png" width="40%" title="Fragment life cycle" alt="Fragment life cycle" />
+
+## Floating Button
+![floating button](./resources/floating_button.png)
