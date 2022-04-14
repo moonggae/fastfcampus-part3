@@ -70,11 +70,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 //            startActivity(Intent(requireContext(), ArticleAddActivity::class.java))
             context?.let {
                 // todo 로그인 기능 구현 후 주석 해제
-//                if (auth.currentUser != null) {
+                if (auth.currentUser != null) {
                     startActivity(Intent(it, AddArticleActivity::class.java))
-//                } else {
-//                    Snackbar.make(requireView(), "로그인 후 사용해주세요", Snackbar.LENGTH_SHORT).show()
-//                }
+                } else {
+                    Snackbar.make(requireView(), "로그인 후 사용해주세요", Snackbar.LENGTH_SHORT).show()
+                }
             }
         }
     }
