@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.Overlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.util.MarkerIcons
 import fastcampus.aop.part3.chapter07.databinding.ActivityMainBinding
@@ -15,7 +17,7 @@ import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickListener {
     private val TAG = "로그"
     private lateinit var naverMap: NaverMap
     private val binding by lazy {
@@ -37,6 +39,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.bottomSheet.houseRecyclerView.adapter = houseListAdapter
         binding.bottomSheet.houseRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        binding.houseViewPager.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                val selectedHouseModel = viewPagerAdapter.currentList[position]
+                val cameraUpdate =
+                    CameraUpdate.scrollTo(LatLng(selectedHouseModel.lat, selectedHouseModel.lng))
+                        .animate(CameraAnimation.Easing)
+                naverMap.moveCamera(cameraUpdate)
+            }
+        })
     }
 
 
@@ -101,6 +116,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         marker.tag = house.id
         marker.icon = MarkerIcons.BLACK
         marker.iconTintColor = Color.RED
+        marker.onClickListener = this
     }
 
 
@@ -161,6 +177,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    }
+
+    override fun onClick(overlay: Overlay): Boolean {
+
+        val selectedModel = viewPagerAdapter.currentList.firstOrNull { houseModel ->
+            houseModel.id == overlay.tag
+        }
+
+        selectedModel?.let {
+            val position = viewPagerAdapter.currentList.indexOf(it)
+            binding.houseViewPager.currentItem = position
+        }
+        return true
+
     }
 
 }
