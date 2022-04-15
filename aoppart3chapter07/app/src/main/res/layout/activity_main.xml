@@ -9,7 +9,8 @@
     <com.naver.maps.map.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="86dp" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/houseViewPager"
@@ -19,6 +20,15 @@
         android:layout_marginBottom="120dp"
         android:orientation="horizontal" />
 
-    <include layout="@layout/bottom_sheet" />
+    <com.naver.maps.map.widget.LocationButtonView
+        android:id="@+id/currentLocationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_margin="12dp" />
+
+    <include
+        android:id="@+id/bottomSheet"
+        layout="@layout/bottom_sheet" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

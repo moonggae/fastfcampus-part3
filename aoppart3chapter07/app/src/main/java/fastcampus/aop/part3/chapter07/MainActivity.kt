@@ -4,6 +4,7 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationSource: FusedLocationSource
 
     private val viewPagerAdapter = HouseViewPagerAdapter()
+    private val houseListAdapter = HouseListAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +34,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.mapView.getMapAsync(this)
 
         binding.houseViewPager.adapter = viewPagerAdapter
+
+        binding.bottomSheet.houseRecyclerView.adapter = houseListAdapter
+        binding.bottomSheet.houseRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
 
@@ -45,7 +50,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         naverMap.moveCamera(cameraUpdate)
 
         val uiSettings = naverMap.uiSettings
-        uiSettings.isLocationButtonEnabled = true
+        uiSettings.isLocationButtonEnabled = false
+
+        binding.currentLocationButton.map = naverMap
 
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
@@ -71,6 +78,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         response.body()?.let { dto ->
 
                             viewPagerAdapter.submitList(dto.items)
+                            houseListAdapter.submitList(dto.items)
 
                             dto.items.forEach { house ->
                                 updateMarker(house)
