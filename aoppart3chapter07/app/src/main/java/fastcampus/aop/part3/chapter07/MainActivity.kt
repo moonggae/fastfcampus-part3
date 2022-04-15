@@ -22,12 +22,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
     private lateinit var locationSource: FusedLocationSource
 
+    private val viewPagerAdapter = HouseViewPagerAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.mapView.onCreate(savedInstanceState)
 
         binding.mapView.getMapAsync(this)
+
+        binding.houseViewPager.adapter = viewPagerAdapter
     }
 
 
@@ -65,11 +69,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         }
 
                         response.body()?.let { dto ->
+
+                            viewPagerAdapter.submitList(dto.items)
+
                             dto.items.forEach { house ->
                                 updateMarker(house)
                             }
                         }
-
                     }
 
                     override fun onFailure(call: Call<HouseDto>, t: Throwable) {
