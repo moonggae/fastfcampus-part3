@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import fastcampus.aop.part3.chapter07.databinding.ItemHouseDetailForViewpagerBinding
 
-class HouseViewPagerAdapter : ListAdapter<HouseModel, HouseViewPagerAdapter.ViewHolder>(diffUtil) {
+class HouseViewPagerAdapter(val itemClicked : (HouseModel) -> Unit) : ListAdapter<HouseModel, HouseViewPagerAdapter.ViewHolder>(diffUtil) {
 
     private val TAG = "로그"
 
@@ -22,6 +22,10 @@ class HouseViewPagerAdapter : ListAdapter<HouseModel, HouseViewPagerAdapter.View
             Glide.with(binding.thumbnailImageView)
                 .load(houseModel.imgUrl)
                 .into(binding.thumbnailImageView)
+
+            binding.root.setOnClickListener {
+                itemClicked(houseModel)
+            }
         }
     }
 

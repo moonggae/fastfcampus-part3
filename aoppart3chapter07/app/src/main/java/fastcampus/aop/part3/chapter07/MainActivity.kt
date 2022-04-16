@@ -1,5 +1,6 @@
 package fastcampus.aop.part3.chapter07
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -25,7 +26,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
     }
     private lateinit var locationSource: FusedLocationSource
 
-    private val viewPagerAdapter = HouseViewPagerAdapter()
+    private val viewPagerAdapter = HouseViewPagerAdapter{
+        val intent = Intent()
+            .apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, "[지금 이 가격에 예약하세요!!!] ${it.title} ${it.price} 사진보기 : ${it.imgUrl}")
+                type = "text/plain"
+            }
+        startActivity(Intent.createChooser(intent, null))
+    }
     private val houseListAdapter = HouseListAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,6 +103,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
 
                             viewPagerAdapter.submitList(dto.items)
                             houseListAdapter.submitList(dto.items)
+
+                            binding.bottomSheet.bottomSheetTitleTextView.text = "${dto.items.size}개의 숙소"
 
                             dto.items.forEach { house ->
                                 updateMarker(house)
