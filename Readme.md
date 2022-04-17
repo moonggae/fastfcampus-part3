@@ -110,7 +110,7 @@ remoteConfig.fetchAndActivate().addOnCompleteListener {
 ```
 ![remote config value](./resources/remote_config.png)
 
-## ViewPager
+## ViewPager2
 - `ViewHolder Pattern`으로 구현
 - 아이템 개수 무한으로 늘리기
     - 아이템 개수를 int max 값으로 설정 
@@ -405,3 +405,89 @@ private fun replaceFragment(fragment : Fragment){
 
 ## Floating Button
 ![floating button](./resources/floating_button.png)
+
+
+# Chapter07 - 에어비앤비
+
+## [Naver Map API](https://navermaps.github.io/android-map-sdk/guide-ko/1.html)
+
+## FrameLayout
+- 여러개의 뷰(View) 위젯들을 중첩하고, 그 중 하나를 전면에 표시할 때 사용하는 레이아웃
+- 액자 속 사진을 마음대로 빼고 넣고 하듯이, 경우에 따라 보여주고 싶은 화면을 자유자재로 스위칭 할 수 있도록 하는 것이 FrameLayout 사용 목적
+
+## CoordinatorLayout
+- View간의 상호작용을 처리하기 위한 View
+- CoordinatorLayout이 Child View의 Behavior를 수신하여 다른 Child View에 Behavior를 전달
+- Child View는 미리 정의된 Behavior를 사용하거나 새롭게 만든 Behavior를 사용하여 수신된 Behavior로 특정 작업을 수행
+
+## BottomSheetBehavior
+- `CoordinatorLayout`을 이용하여 구현
+```xml
+<!-- activity_main.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    ...
+
+    <include
+        android:id="@+id/bottomSheet"
+        layout="@layout/bottom_sheet" />
+
+    ...
+```
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout 
+    ...
+    app:behavior_peekHeight="100dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    ...
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+## Glide
+- `transform()`메소드로 커스텀
+```kotlin
+Glide.with(binding.thumbnailImageView)
+    .load(houseModel.imgUrl)
+    .transform(CenterCrop(), RoundedCorners(dpToPx(binding.thumbnailImageView.context, 12))) // centor 기준으로 꽉차게 이미지 확장, corder raidus 주기
+    .into(binding.thumbnailImageView)
+```
+
+## Share (공유)
+- intent 이용
+```kotlin
+val intent = Intent()
+    .apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, "[지금 이 가격에 예약하세요!!!] ${it.title} ${it.price} 사진보기 : ${it.imgUrl}")
+        type = "text/plain"
+    }
+startActivity(Intent.createChooser(intent, null))
+```
+
+
+
+## theme 이용해서 status bar color를 window color와 통일 시키기
+```xml
+<!-- themes.xml -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.Aoppart3chapter07" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        ...
+        <item name="android:statusBarColor" tools:targetApi="l">?android:windowBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
+        ...
+    </style>
+</resources>
+```
+```xml
+<!-- themes.xml - night -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.Aoppart3chapter07" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        ...
+        <item name="android:statusBarColor" tools:targetApi="l">?android:windowBackground</item>
+        ...
+    </style>
+</resources>
+```
